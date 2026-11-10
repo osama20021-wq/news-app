@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/constants/storge_key.dart';
 import 'package:flutter_application_1/core/repositories/repository_service.dart';
 import 'package:flutter_application_1/features/news/model/articles_model.dart';
 
 class NewsController extends ChangeNotifier {
   bool isLoading = false;
+  int categoryIndex = 0;
   final RepositoryService _service = RepositoryService();
   List<ArticlesModel> topHeadLineNews = [];
   List<ArticlesModel> everythingNews = [];
@@ -17,7 +19,9 @@ class NewsController extends ChangeNotifier {
     try {
       isLoading = true;
       notifyListeners();
-      topHeadLineNews = await _service.getHeadLineNews();
+      topHeadLineNews = await _service.getHeadLineNews(
+        StorgeKey.categories[categoryIndex],
+      );
     } catch (e) {
       rethrow;
     } finally {

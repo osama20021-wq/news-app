@@ -4,10 +4,12 @@ import 'package:flutter_application_1/features/news/model/articles_model.dart';
 
 class RepositoryService {
   final DioService _dioService = DioService();
-  Future<List<ArticlesModel>> getHeadLineNews() async {
+  Future<List<ArticlesModel>> getHeadLineNews(String category) async {
     try {
       List<ArticlesModel> articles = [];
-      final response = await _dioService.getUrl(StorgeKey.topHeadLineNews);
+      final response = await _dioService.getUrl(
+        StorgeKey().categoryNews(category),
+      );
       for (Map<String, dynamic> data in response.data["articles"]) {
         articles.add(ArticlesModel.fromJson(data));
       }

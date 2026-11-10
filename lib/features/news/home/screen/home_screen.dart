@@ -2,10 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/features/news/categories/screen/categories_screen.dart';
-import 'package:flutter_application_1/features/news/news_details/screen/news_details.dart';
+import 'package:flutter_application_1/features/news/trending/screen/trending_news.dart';
 import 'package:flutter_application_1/features/news/widget/category_widget.dart';
 import 'package:flutter_application_1/features/news/manager/news_controller.dart';
 import 'package:flutter_application_1/features/news/widget/news_list.dart';
+import 'package:flutter_application_1/features/news/home/screen/trending_news_list.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -60,7 +61,19 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   Spacer(),
                                   GestureDetector(
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ChangeNotifierProvider(
+                                                create: (context) =>
+                                                    NewsController()..init(),
+                                                child: TrendingNewsScreen(),
+                                              ),
+                                        ),
+                                      );
+                                    },
                                     child: Text(
                                       "View all",
                                       style: TextStyle(
@@ -89,111 +102,12 @@ class HomeScreen extends StatelessWidget {
                             builder: (context, controller, child) {
                               return ListView.separated(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: controller.topHeadLineNews.length,
+                                itemCount: controller.everythingNews.length,
 
                                 itemBuilder: (context, index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => NewsDetails(
-                                            articlesModel: controller
-                                                .topHeadLineNews[index],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 239,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: Colors.white),
-                                      ),
-                                      child: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          SizedBox.expand(
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: Image.network(
-                                                controller
-                                                        .topHeadLineNews[index]
-                                                        .urlToImage ??
-                                                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXTFH3NidfLUTCazwSaOSy-i8sSjSm7kDtrOK27KJVwBb2VMEok6mUryI&s=10",
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-
-                                          Padding(
-                                            padding: const EdgeInsets.all(10),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  controller
-                                                          .topHeadLineNews[index]
-                                                          .title ??
-                                                      "",
-                                                  maxLines: 2,
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w700,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-
-                                                const SizedBox(height: 4),
-
-                                                Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child: CircleAvatar(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        child: Image.asset(
-                                                          "images/cnn-1.png",
-                                                          width: 12,
-                                                          height: 5.58,
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    const SizedBox(width: 4),
-
-                                                    Text(
-                                                      "CNN News",
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .bodySmall,
-                                                    ),
-
-                                                    const Spacer(),
-
-                                                    const Text(
-                                                      "2 hours ago",
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                  return TrendingNewsList(
+                                    articlesList: controller.everythingNews,
+                                    index: index,
                                   );
                                 },
                                 separatorBuilder: (context, index) {
@@ -233,7 +147,7 @@ class HomeScreen extends StatelessWidget {
                                         ChangeNotifierProvider(
                                           create: (context) =>
                                               NewsController()
-                                                ..geteverythingNews(),
+                                                ..getTopHeadLineNews(),
                                           child: CategoriesScreen(),
                                         ),
                                   ),
@@ -261,7 +175,17 @@ class HomeScreen extends StatelessWidget {
                 ),
                 SliverPadding(
                   padding: EdgeInsetsGeometry.all(16),
-                  sliver: NewsList(),
+                  sliver: SliverList.separated(
+                    itemCount: controller.topHeadLineNews.length,
+                    itemBuilder: (context, index) {
+                      return NewsList(
+                        articlesModel: controller.topHeadLineNews[index],
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 12);
+                    },
+                  ),
                 ),
               ],
             );

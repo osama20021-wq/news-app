@@ -35,7 +35,18 @@ class CategoriesScreen extends StatelessWidget {
               ),
               SliverPadding(
                 padding: EdgeInsetsGeometry.all(16),
-                sliver: NewsList(pageUsedName: "category"),
+                sliver: SliverList.separated(
+                  itemCount: controller.topHeadLineNews.length,
+                  itemBuilder: (context, index) {
+                    return NewsList(
+                      pageUsedName: "category",
+                      articlesModel: controller.topHeadLineNews[index],
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return SizedBox(height: 12);
+                  },
+                ),
               ),
             ],
           );
